@@ -1,0 +1,19 @@
+name: harmony3d
+description: A 3D Game Engine with WebGL
+dependencies:
+  aabb_tree:
+    path: /Users/jako/projects_dart/aabb_tree
+  animator:
+    path: /Users/jako/projects_dart/animator
+  game_loop:
+    git: https://github.com/johnmccutchan/game_loop.git
+  harmony_devices:
+    path: /Users/jako/projects_dart/harmony_devices
+  mirror_utilities:
+    path: /Users/jako/projects_dart/mirror_utilities
+  resources_io:
+    path: /Users/jako/projects_dart/resources_io
+  spectre:
+    git: https://github.com/johnmccutchan/spectre.git
+  vector_math:
+    git: https://github.com/johnmccutchan/vector_math.git
