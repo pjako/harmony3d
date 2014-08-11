@@ -1,0 +1,1 @@
+{"name":"Campfire01", "shader":"assets/shader/specular.shader", "uniforms":{"_Shininess":0.03618946, "_Color":[ 0.6941177, 0.6941177, 0.6941177 ], "_SpecColor":[ 0.5522388, 0.5522388, 0.5522388, 1.0 ]}, "textures":{"_MainTexture":"assets/L_FG_Assets_Pack_Lite/Textures/Campfire01_D.png"}}

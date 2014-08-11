@@ -1,0 +1,1 @@
+{"name":"Bloom01", "shader":"assets/shader/particles/additive.shader", "uniforms":{"_TintColor":[ 0.5, 0.5, 0.5 ], "_InvFade":0.9025373}, "textures":{"_MainTexture":"assets/L_FG_Assets_Pack_Lite/Textures/Bloom01_D.png"}}

@@ -1,15 +1,15 @@
 part of custom_behaviours;
 
 
-class FreeCamera extends ScriptBehaviour {
+class FreeCamera extends Component {
 
   static final Quaternion delta = new Quaternion.identity();
 
 
   @Serialize(SerializeType.double)
-  double sensitivityX = 15.0;
+  double sensitivityX = 1.0;
   @Serialize(SerializeType.double)
-  double sensitivityY = 15.0;
+  double sensitivityY = 1.0;
   @Serialize(SerializeType.double)
   double minimumX = -360.0;
   @Serialize(SerializeType.double)
@@ -42,21 +42,21 @@ class FreeCamera extends ScriptBehaviour {
   void update() {
     transform.getForwardLocal(vec);
     vec.normalize();
-    if(Input.keyDown(Keyboard.UP)) {
+    if(Input.keyDown(Keyboard.W)) {
       vec.scale(-0.2);
       transform.translate(vec);
       //vec.z -= 0.2;
-    } else if(Input.keyDown(Keyboard.DOWN)) {
+    } else if(Input.keyDown(Keyboard.S)) {
       vec.scale(0.2);
       transform.translate(vec);
       //vec.z += 0.2;
     }
-    if(Input.keyDown(Keyboard.LEFT)) {
+    if(Input.keyDown(Keyboard.A)) {
       transform.getRightLocal(vec);
       vec.normalize();
       vec.scale(-0.2);
       transform.translate(vec);
-    } else if(Input.keyDown(Keyboard.RIGHT)) {
+    } else if(Input.keyDown(Keyboard.D)) {
       transform.getRightLocal(vec);
       vec.normalize();
       vec.scale(0.2);
@@ -73,12 +73,12 @@ class FreeCamera extends ScriptBehaviour {
       vec.scale(0.2);
       transform.translate(vec);
     }
-    print(transform.localPosition);
+    //print('camerapos: ${transform.localPosition}');
     //transform.translate(vec);
-    if(Input.buttonUp(0)) return;
+    if(Input.buttonDown(0)) return;
       // Read the mouse input axis
-    _rotationX += /*Input.GetAxis("Mouse X")*/ Input.mouseXaxis * sensitivityX;
-    _rotationY += /*Input.GetAxis("Mouse Y")*/ Input.mouseYaxis * sensitivityY;
+    _rotationX += /*Input.GetAxis("Mouse X")*/ Input.mouseDx/*Input.mouseXaxis*/ * sensitivityX;
+    _rotationY += /*Input.GetAxis("Mouse Y")*/ Input.mouseDy/*Input.mouseYaxis*/ * sensitivityY;
 
     _rotationX = clampAngle(_rotationX, minimumX, maximumX);
     _rotationY = clampAngle(_rotationY, minimumY, maximumY);
