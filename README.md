@@ -14,13 +14,13 @@ Harmony3D is a 3d Game Engine inspired by Unity3D and the UnrealEngine.
 ## How To Create your own Component
 
 Import harmony
-´´´Dart
+```Dart
 import 'packages:harmony3d/harmony.dart';
-´´´
+```
 
 Create your component by extending the component class (only implementing will not work!)
-´´´Dart
+```Dart
 class MyComponent extends Component {
 
 }
-´´´
+```
