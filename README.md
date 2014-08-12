@@ -24,3 +24,13 @@ class MyComponent extends Component {
 
 }
 ```
+
+Implement "update()" to updated the component. This gets called by the Engine
+```Dart
+class MyComponent extends Component {
+  void update() {
+    print('Current Time: ${Time.deltaTime}');
+  }
+
+}
+```
