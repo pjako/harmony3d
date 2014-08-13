@@ -25,7 +25,7 @@ class MyComponent extends Component {
 }
 ```
 
-Implement "update()" to updated the component. This gets called by the Engine
+Implement update() to update the component. This gets then called by the Engine in the update loop.
 ```Dart
 class MyComponent extends Component {
   void update() {
