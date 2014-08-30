@@ -1,62 +1,37 @@
 part of harmony;
 
 
-@HandlesAsset('scene')
-class SceneHandler extends AssetHandler {
-  List<Scene> _cache = [];
-  Scene _getFree() {
-    if(_cache.isEmpty) {
-      return new Scene._empty(10000000);
-    }
-    return _cache.removeLast();
-  }
 
-  Asset create() => _getFree();
-
-  Asset load(String src, Loader loader) {
-    var scene = create();
-    loader.getText(src).then((str) {
-      _loadScene(scene, JSON.decode(str)).then((_) {
-      	print('scene LOADED!');
-        loadingDone(scene);
-      });
-
-    });
-    return scene;
-  }
-  bool unload(Asset asset) {
-    var scene = asset as Scene;
-    _cache.add(scene);
-    return true;
-  }
-  Future save(Asset asset, String src, Loader loader) {
-  }
-}
-
+/// A scene contains a hierachy of gameobjects, starting at root
 class Scene extends Asset with SceneView {
 
-
-  ///
   /// The current active Scene
-  ///
   static Scene get current => _current;
   static Scene _current;
 
+  /// Scene name
   String name;
+
+  /// Lightmaps for static lightning
   List<Texture> _lightmaps;
 
 
+  /// Unique objects like GameObjects and Components
   final Map<int, UniqueObject> _idMap = new Map<int, UniqueObject>();
   int _maxGameObjects;
   GameObject _root;
+  /// The root GameObject, all GameObjects in the scene are children of this Object
   GameObject get root => _root;
   //GUIDGen _guidGen;
-  RenderManager _renderManager;
+
+  /*RenderManager _renderManager;
 
   void set renderManager(RenderManager manager) {
     _renderManager = manager;
   }
   RenderManager get renderManager => _renderManager;
+	*/
+
 
   Scene(int this._maxGameObjects) {
     //_guidGen = new GUIDGen();
@@ -70,37 +45,26 @@ class Scene extends Asset with SceneView {
     _registerGameObject(_root, null);
   }
 
-  // Renderpreperation and custom rendering happens here
+  /// Renderpreperation and custom rendering happens here
   void _render() {
     if(Camera.current == null) return;
     _updateVisibleNodes(Camera.current);
   }
 
-  /**
-   * Registers a game object with the scene.
-   * The second parameter indicates the parent of the game object.
-   * Returns null unless 'initializeComponents' is set to false,
-   * in wich case it returns a list of game objects that need to be initialized.
-   * This mechanism is used internally calling this function recursively to
-   * register children of the game object we are trying to register.
-   * This ensures that components don't get initialized before all of the
-   * children of their owner have been added.
-   */
+  /// Registers a game object with the scene.
+  /// The second parameter indicates the parent of the game object.
+  /// Returns null unless 'initializeComponents' is set to false,
+  /// in wich case it returns a list of game objects that need to be initialized.
+  /// This mechanism is used internally calling this function recursively to
+  /// register children of the game object we are trying to register.
+  /// This ensures that components don't get initialized before all of the
+  /// children of their owner have been added.
   Set<GameObject> _registerGameObject(GameObject go, GameObject parent,
                           [bool initializeComponents = true]) {
     if (parent != null) {
       // Can't have a parent from a different scene.
       assert(parent.scene == this);
     }
-
-    /*if(go.id != null) {
-      if (_idMap[go.id] != null) {
-        throw 'Trying to register a second game object with the id "${go.id}" '
-            'to this scene.';
-      }
-
-      _idMap[go.id] = go;
-    }*/
 
     go._scene = this;
     go._parent = parent;
@@ -176,9 +140,7 @@ class Scene extends Asset with SceneView {
   }
 
 
-  /**
-   * Returns the game object with the specified id if owned by this scene.
-   */
+  /// Returns the game object with the specified id if owned by this scene.
   GameObject getGameObjectWithId(String id) {
     return _idMap[id];
   }

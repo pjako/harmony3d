@@ -1,7 +1,9 @@
 part of harmony;
 
 
-
+/// Manage execution of the Engine
+/// Also measures Time related stuff, basically the gameloop
+/// of harmony3D
 class _EngineManager {
   final Stopwatch _stopWatch = new Stopwatch();
   final List<GameTimer> _timers = [];

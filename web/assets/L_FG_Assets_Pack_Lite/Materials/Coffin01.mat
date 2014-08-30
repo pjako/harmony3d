@@ -1,1 +1,0 @@
-{"name":"Coffin01", "shader":"assets/shader/specular.shader", "uniforms":{"_Shininess":0.078125, "_Color":[ 0.7843137, 0.7843137, 0.7843137 ], "_SpecColor":[ 0.2278904, 0.3224221, 0.6940298, 1.0 ]}, "textures":{"_MainTexture":"assets/L_FG_Assets_Pack_Lite/Textures/Coffin01_D.png"}}

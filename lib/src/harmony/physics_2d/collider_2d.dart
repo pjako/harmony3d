@@ -18,10 +18,19 @@ class ContactPoint2D {
 
 
 
-
+/// A collider in 2D space
+///
+/// If your scripts implements any of these methods they will get called.
+///
+/// void onCollisionEnter2D(Collision2D collision) {}
+/// void onCollisionStay2D(Collision2D collision) {}
+/// void onCollisionExit2D(Collision2D collision) {}
+/// void onTriggerEnter2D(Collider2D collider) {}
+/// void onTriggerStay2D(Collider2D collider) {}
+/// void onTriggerExit2D(Collider2D collider) {}
 abstract class Collider2D extends Component {
-  
-  
+
+
   void _preInit() {
     if(gameObject._collider2d != null) {
       throw "Only one Collider2D per GameObject is allowed";
@@ -30,16 +39,11 @@ abstract class Collider2D extends Component {
   }
 
 
-  void onCollisionEnter2D(Collision2D collision) {}
-  void onCollisionStay2D(Collision2D collision) {}
-  void onCollisionExit2D(Collision2D collision) {}
 
 
-  void onTriggerEnter2D(Collider2D collider) {}
-  void onTriggerStay2D(Collider2D collider) {}
-  void onTriggerExit2D(Collider2D collider) {}
 
 
+  /// set or get if this collider is a trigger
   bool get isTrigger;
   void set isTrigger(bool trigger);
 
@@ -51,31 +55,31 @@ abstract class Collider2D extends Component {
 
 }
 
-
+/// A 2D polygon collider
 class PolygonCollider2D extends Collider2D {
   PolygonCollider _collider;
   List<Vector2> get points => _collider.points;
   var _tmpSavePoint;
-  
+
   void _preInit() {
     super._preInit();
     _collider = new PolygonCollider(_physicsDevice2d);
   }
-  
+
   void setPointsWithCentroid(List<Vector2> otherVertices, Vector2 centroid) {
     _collider.setFromWithCentroid(otherVertices, centroid);
   }
-  
+
   void setToBox(double hx, double hy) {
     _collider.setToBox(hx, hy);
   }
-  
+
   void set position(Vector2 pos) {
     _collider.position = pos;
   }
-  
-  
-  
+
+
+
   void set points(List<Vector2> p) {
     if(_collider == null) {
       _tmpSavePoint = p;
@@ -105,6 +109,7 @@ class PolygonCollider2D extends Collider2D {
   }
 }
 
+/// A circle collider
 class CircleCollider2D extends Collider2D {
   CircleCollider _collider;
   double get radius => _collider.radius;

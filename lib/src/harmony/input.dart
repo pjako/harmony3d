@@ -2,12 +2,8 @@ part of harmony;
 
 
 
-
+/// Get Input of Gampads, Mouse and Keyboard
 class Input {
-  //static InputDevice _inputDevice;
-
-  static int get mouseLastFrameUpdate => _inputDevice.mouseLastFrameUpdate;
-  static double get mouseLastUpdateTime => _inputDevice.mouseLastUpdateTime;
   /// Mouse position x
   static int get mouseX => _inputManager.mouseX;
   /// Mouse position y
@@ -26,13 +22,12 @@ class Input {
   static int get wheelDy => _inputManager.mouseWheelDeltaY;
   static bool get mouseWithinCanvas => _inputManager.withinCanvas;
 
-  //static double get mouseXaxis => _inputDevice.mouseXaxis;
-  //static double get mouseYaxis => _inputDevice.mouseYaxis;
-
+  /// Is mouse button down?
   static bool buttonDown(int buttonId) {
     return _inputManager.isButtonPressed(buttonId);
   }
 
+  /// Is keyboard key down?
   static bool keyDown(int keyId) {
     return _inputManager.isKeyPressed(keyId);
   }
@@ -72,6 +67,8 @@ class Input {
     return _inputDevice.keyTimeReleased(keyId);
   }*/
 
+  /// Gets Gampad by index
+  /// returns null if gamepad for specific index is not pluged in
   static GamePad getGamePad(int idx) {
     return _inputManager.getGamePad(idx);
   }
@@ -108,6 +105,41 @@ class Input {
   }*/
 
 }
+
+class GamePad {
+  final List<num> _buttons = new List.filled(16, 0.0);
+  final List<num> _axes = new List.filled(16, 0.0);
+
+  /// Get the button state of specified [id]
+  /// Returns a number between -1.0 and 1.0
+  num getButton(int id) {
+  	return _buttons[id];
+  }
+  /// Get the axis state of specified [id]
+  /// Returns a number between -1.0 and 1.0
+  num getAxis(int id) {
+  	return _axes[id];
+  }
+  int get maxButtonId => 16;
+  int get maxAxiesId => 16;
+  bool get xButtonA => false;
+  bool get xButtonB => false;
+  bool get xButtonX => false;
+  bool get xButtonY => false;
+  bool get xButtonRB => false;
+  bool get xButtonLB => false;
+  bool get xStart => false;
+  bool get xBack => false;
+  double get xButtonLT => 0.0;
+  double get xButtonLR => 0.0;
+  double get xAnalogLeftAxisX => 0.0;
+  double get xAnalogLeftAxisY => 0.0;
+  double get xAnalogRightAxisX => 0.0;
+  double get xAnalogRightAxisY => 0.0;
+  bool get xDigitalAxisX => false;
+  bool get xDigitalAxisY => false;
+}
+
 
 
 class Keyboard {

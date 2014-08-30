@@ -1,13 +1,8 @@
 part of harmony;
 
 
-/********************************************************
- * Audio Source
- *
- * A Source of Audio in the 3D Room
- *
- ********************************************************/
-
+/// Audio Source
+/// A Source of Audio in the 3D Space
 class AudioSource extends Component {
   final audio.AudioSource _source = new audio.AudioSource(_audioDevice);
   @Serialize(SerializeType.asset, customName: 'clip')

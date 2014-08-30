@@ -1,5 +1,5 @@
 part of harmony;
-
+/// Frustrum planes for Camera calculation
 class _FrustumPlanes {
   final List<Plane> lrtb = new List<Plane>(4);
   final List<Plane> lrtbf = new List<Plane>(5);

@@ -8,10 +8,12 @@ class LightType {
   static const directional = const LightType(2);
   static const ambient = const LightType(3);
 }
-
+/// A physical light. Spot-, Point- or Directionallight
 class Light extends Component {
   final LightParameters _parameters = new LightParameters();
   LightType _lightType;
+
+  /// Lighttype of this light
   LightType get lightType => _lightType;
   void set lightType(LightType val) {
     if(_lightType == LightType.directional) {
@@ -23,21 +25,22 @@ class Light extends Component {
       gameObject.scene._globalDirectionalLights.add(this);
     }
   }
+
+  /// Range of this light
   double range;
+  /// Intensity of this Light
   double intensity;
+  /// Light color
   Vector3 color;
+  /// Does this light cast shadows?
   bool shadows;
+
   Sphere sphere;
 
   void _init() {
     if(_lightType == LightType.directional) {
       gameObject.scene._globalDirectionalLights.add(this);
     }
-
-  }
-
-
-  void transformChanged() {
 
   }
 

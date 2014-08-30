@@ -1,15 +1,13 @@
 part of harmony;
-
-/********************************************************
- * Component
- *
- * The baseclass to all components
- *
- * Default Messages:
- * void update()
- * void fixUpdated()
- * void lateUpdate()
- ********************************************************/
+/// Component
+///
+/// The baseclass to all components
+///
+/// Default Messages:
+/// void update()
+/// void fixUpdated()
+/// void lateUpdate()
+///
 @mist.MistReflect(includeSubclasses: true)
 class Component extends UniqueObject {
   @mist.Ignore()
@@ -18,22 +16,19 @@ class Component extends UniqueObject {
   //String get type => _system.componentName;
 
 
-  ///
   /// Calls Resources.load() with [src] and returns the requested asset.
   /// Automatically adds a dependency for this Object on the returned asset.
   /// Deletes the dependency when component gets destroyed
-  ///
   Asset loadResource(String src) {
     var asset = Resources.load(src);
     asset.dependsOnThis(this);
     _componentAssets.add(asset);
     return asset;
   }
-  ///
+
   /// Calls Resources.load() with [src] and returns a future
   /// Automatically adds a dependency for this Object on the returned asset.
   /// Deletes the dependency when component gets destroyed
-  ///
   Future<Asset> loadResourceAsync(String src) {
     var asset = Resources.load(src);
     asset.dependsOnThis(this);
@@ -53,7 +48,7 @@ class Component extends UniqueObject {
     _enabled = false;
   }
 
-  // Enable this Component
+  // Is this component enabled?
   bool get enabled => _enabled;
 
   GameObject _owner;
@@ -89,11 +84,8 @@ class Component extends UniqueObject {
 
   }
 
+  /// gets called when this component is enabled
   void awake() {
-
-  }
-
-  void onEnable() {
 
   }
 
@@ -119,6 +111,7 @@ class Component extends UniqueObject {
   Component() {
   }
 
+  /// destroys this component, every non engine pointer to this component must be removed
   void destroy() {
     if(_owner == null) {
       print('[Warning] Component has already been destroyed!');
@@ -128,12 +121,14 @@ class Component extends UniqueObject {
   }
 
 
+  /// gets called when this component gets destroyed
   void onDestroy() {
 
   }
 
 
-  // checks all dependencies of the component
+  /// checks all dependencies of the component
+  /// dependencies are always other components attached to the component
   bool _checkDependencies() {
     var dependencies = _system._dependencies;
     for(var component in dependencies) {

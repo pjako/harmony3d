@@ -24,7 +24,7 @@ class MeshRMModul {
 }
 
 
-
+// Representation of an Vertexattribute
 class _VertexAttribute {
 	static final _l = [];
 	factory _VertexAttribute(String name, String format, int offset, int stride) {
@@ -46,9 +46,13 @@ class _VertexAttribute {
   }
 
 
+  /// Attribute name
 	String name;
+	/// Attribute format
 	String format;
+	/// Offset in bytes
 	int offset;
+	/// Stride offset in bytes
 	int stride;
 	void destroy() {
 		_l.add(this);
@@ -56,7 +60,7 @@ class _VertexAttribute {
 	String toString() => '$name$offset$stride$format';
 }
 
-
+/// Shaderattribute defined by
 class ShaderAttributes {
 	final int index;
 	final String name;
@@ -289,44 +293,69 @@ class CameraView {
 class EngineSettings {
   static bool useSimd = false;
 }
-
+/// Rendermanager is in charge for how everything gets rendered and
+/// tries to optimize sending data to the gpu as much as possible
 class RenderManager {
+	/// GraphicsDevice for sending Commands to the GPU
   final dml.GraphicsDevice _device;
+  /// VertexBufferManager
   VertexBufferManager _vertexBufferManager;
 
 
   final ForwardRenderer _forwardRenderer = new ForwardRenderer();
 
 
+  /// List of shaders that still needs to be compiled
   final List<Shader> _shaderNeedCompile = [];
   dml.Viewport _viewport;
 
+  /// Opaque BlendState
   final _opaque = new dml.BlendState.opaque(_graphicsDevice);
+  /// Additive BlendState
   final _additive = new dml.BlendState.additive(_graphicsDevice);
+  /// Alpha BlendState
   final _alphaBlend = new dml.BlendState.alphaBlend(_graphicsDevice);
+  /// Non premulitpied BlendState
   final _nonPremultiplied = new dml.BlendState.nonPremultiplied(_graphicsDevice);
+
+  /// Ignore Depth
   final _depthNone = new dml.DepthState.none(_graphicsDevice);
+  /// Read but not write depth
   final _depthRead = new dml.DepthState.depthRead(_graphicsDevice);
+  /// Write & Read depth
   final _depthWrite = new dml.DepthState.depthWrite(_graphicsDevice);
 
   bool _doClear, _hasAmbient;
   double _lightingScale;
   Vector4 _ambientColor, _backgroundColor;
+  /// Background Queue does not write depth, first pass
   final List<RenderJob> backgroundQueue = new List<RenderJob>(),
+  /// GeometryQueue is for rendering solid geometry, writes & reads depth. Renders front to back
                         geometryQueue = new List<RenderJob>(),
+  /// AlphaTestQueue is for rendering geometry that has some parts that are cut out. Renders front to back
                         alphaTestQueue = new List<RenderJob>(),
+  /// TransparentQueue is for transparent objects, reads depth only. Renders Back to Front
                         transparent = new List<RenderJob>(),
+  /// OverlayQueue ignores depth informatins for renderer.
                         overlayQueue = new List<RenderJob>();
+
+  /// Current visible PointLights
   List<Light> _pointLights;
+  /// Current visible SpotLights
   List<Light> _spotLights;
+  /// Current visible DirectionalLights
   List<Light> _directionalLights;
+  /// Global directional Lights
+  /// TODO: should there be more then one?
   List<Light> _globalDirectionalLights;
   //final GlobalParameters _globalParameters = new GlobalParameters();
   Matrix4 _globalCameraMatrix;
   Aabb3 _sceneBounds;
+  /// Currently used camera
   Camera _currentCamera;
 
 
+  /// Initializes Mesh
   Future<Mesh> _initMesh(Mesh mesh, Map data) {
   	final _format = new _VertexBufferFormat();
 
@@ -356,6 +385,7 @@ class RenderManager {
   	return new Future<Mesh>.value(mesh);
   }
 
+  /// Initializes Shaders
   Future<Shader> _initShader(Shader shader, Map data) {
   	//print('init shader');
   	final properties = data['properties'];
@@ -388,6 +418,7 @@ class RenderManager {
   	return new Future<Shader>.value(shader);
   }
 
+  /// Initializes Renderer
   void _initRenderer(Renderer renderer) {
     List<RenderJob> jobs = renderer._renderJobs;
     for(var job in jobs) {
@@ -434,8 +465,11 @@ class RenderManager {
 
   final Map<Material,List<Renderer>> _renderSortMap = {};
   int _f = 0;
+
+  /// Render the Scene
   void _render() {
 
+  	/// Reset all render queues
     backgroundQueue.clear();
     geometryQueue.clear();
     alphaTestQueue.clear();
@@ -448,6 +482,7 @@ class RenderManager {
     //_f++;
     //return;
     if(_device.isContextLost) {
+    	// TODO: Handle context lost...
     	print('Context LOST!');
     }
     /// Test if Canvas has been resized
@@ -458,10 +493,12 @@ class RenderManager {
       _viewport.aspectRatio = _realSizeWidth / _realSizeHeight;
 
     }
+
     if(_canvasSizeHeight != _device.canvasHeight) {
       _canvasSizeHeight = _device.canvasHeight;
       _viewport.height = _canvasSizeHeight;
     }
+
     if(_canvasSizeWidth != _device.canvasWidth) {
       _canvasSizeWidth = _device.canvasWidth;
       _viewport.width = _canvasSizeWidth;
@@ -471,7 +508,11 @@ class RenderManager {
 
     /// Update visible Objects of the current active Camera
     final renderCamera = Camera._current;
+
+    /// If there is no camera we have nothing to render
     if(renderCamera == null) return;
+
+    /// Always render the current scene
     final scene = Scene.current;
     scene._updateVisibleNodes(renderCamera);
     renderCamera._prepareForRendering();
@@ -634,6 +675,27 @@ class RenderManager {
     	}
     };
 
+    /*
+    if (shadowMaps) {
+      var sceneBounds = _sceneBounds;
+      var minExtentsHigh = (Math.max((sceneExtents[3] - sceneExtents[0]),
+                                     (sceneExtents[4] - sceneExtents[1]),
+                                     (sceneExtents[5] - sceneExtents[2])) / 6.0);
+
+      shadowMaps.lowIndex = 0;
+      shadowMaps.highIndex = 0;
+      this.drawShadowMaps(gd, globalTechniqueParameters, this.pointLights, shadowMaps, minExtentsHigh);
+      this.drawShadowMaps(gd, globalTechniqueParameters, this.spotLights, shadowMaps, minExtentsHigh);
+      this.drawShadowMaps(gd, globalTechniqueParameters, this.localDirectionalLights, shadowMaps, minExtentsHigh);
+      shadowMaps.blurShadowMaps();
+    }
+    */
+    /*
+     if (postFXsetupFn)
+        {
+            usingRenderTarget = gd.beginRenderTarget(this.finalRenderTarget);
+        }
+    */
 
 
     if(backgroundQueue.isNotEmpty) {
@@ -683,177 +745,6 @@ class RenderManager {
     }
     device.debugDraw(camera._viewProjectionMatrix);
 
-    // Sort Renderers by Material
-
-    /*
-    visibleRenderes.sort((ren0,ren1) {
-      ren0.sharedMaterial.
-    });*/
-
-
-    /// Render Scene
-
-
-  }
-
-
-  static _prepareRenderer(Renderer renderer) {
-  	//print('PREPARE RENDERER!');
-    _renderManager._initRenderer(renderer);
-  }
-
-
-
-
-  void _onResize() {
-    _renderDevice.resize(Screen.width,Screen.height);
-    //_currentCamera.aspectRatio
-
-  }
-
-  void _updateMaterial(Material material) {
-
-  }
-
-  void _updateShader(Shader shader) {
-
-  }
-
-  void _updateTexture(Shader shader) {
-
-  }
-
-
-
-
-  void __render(Scene scene) {
-    backgroundQueue.clear();
-    geometryQueue.clear();
-    alphaTestQueue.clear();
-    transparent.clear();
-    overlayQueue.clear();
-    //Scene scene = Scene.current;
-    Camera camera = Camera.current;
-    _currentCamera = camera;
-    Vector4 ambientColor = _ambientColor;
-    final dml.GraphicsDevice device = _graphicsDevice;
-    final dml.GraphicsContext context = _graphicsDevice.context;
-    camera._prepareForRendering();
-    _prepareRenderers( Camera.current, Scene.current);
-
-
-    _globalParameters.cameraPosition = new Vector3(camera.transform._worldMatrix[12],
-    camera.transform._worldMatrix[13], camera.transform._worldMatrix[14]);
-    _globalParameters.projection = camera._projectionMatrix;
-    _globalParameters.viewMatrix = camera._viewMatrix;
-
-
-    /*
-    if (shadowMaps) {
-      var sceneBounds = _sceneBounds;
-      var minExtentsHigh = (Math.max((sceneExtents[3] - sceneExtents[0]),
-                                     (sceneExtents[4] - sceneExtents[1]),
-                                     (sceneExtents[5] - sceneExtents[2])) / 6.0);
-
-      shadowMaps.lowIndex = 0;
-      shadowMaps.highIndex = 0;
-      this.drawShadowMaps(gd, globalTechniqueParameters, this.pointLights, shadowMaps, minExtentsHigh);
-      this.drawShadowMaps(gd, globalTechniqueParameters, this.spotLights, shadowMaps, minExtentsHigh);
-      this.drawShadowMaps(gd, globalTechniqueParameters, this.localDirectionalLights, shadowMaps, minExtentsHigh);
-      shadowMaps.blurShadowMaps();
-    }
-    */
-    /*
-     if (postFXsetupFn)
-        {
-            usingRenderTarget = gd.beginRenderTarget(this.finalRenderTarget);
-        }
-    */
-    /*
-    if(_doClear) {
-      //_gDevice.clear(0.0, 0.0, 0.0, 1.0, 1.0);
-    } else if(_hasAmbient) {
-      _gDevice.clear(null, 1.0, 1.0);
-    } else {
-      _gDevice.clear(new Vector4.zero(), 1.0, 1.0);
-    }*/
-    device.clear(camera.backgroundColor, 1.0, 1.0);
-
-
-    device.setDepthMode(DepthMode.depthWrite);
-    device.setBlendMode(BlendMode.opaque);
-    if(backgroundQueue.isNotEmpty) {
-      //print('baaackground!');
-      device.drawQueue(backgroundQueue, _globalParameters, -1);
-    }
-
-    if(geometryQueue.isNotEmpty) {
-      //print('geometryQueue!');
-      //var last = geometryQueue.removeLast();
-      //print('Last: ${last.shader.name}');
-      //geometryQueue.insert(0, last);
-      device.drawQueue(geometryQueue, _globalParameters, -1);
-    }
-
-    if(alphaTestQueue.isNotEmpty) {
-      //print('alphaTestQueue!');
-      device.drawQueue(alphaTestQueue, _globalParameters, -1);
-    }
-
-    //device.setDepthMode(DepthMode.depthRead);
-    device.setBlendMode(BlendMode.additive);
-    if(transparent.isNotEmpty) {
-      //print('transparent!');
-      device.drawQueue(transparent, _globalParameters, -1);
-    }
-
-    if(overlayQueue.isNotEmpty) {
-      //print('overlayQueue!');
-      device.drawQueue(overlayQueue, _globalParameters, -1);
-    }
-    device.debugDraw(camera._viewProjectionMatrix);
-
-    /*
-    if(_doClear && _clearColor[3] != 0.0) {
-      _drawAmbientPass(ambientColor);
-    } else {
-        // Here we may need a fill pass because only a handful of materials may glow
-      _gDevice.drawQueue(fillZQueue, _globalParameters, -1);
-
-      _gDevice.drawQueue(glowQueue, _globalParameters, -1);
-    }
-
-
-    // diffuse pass
-    if(diffuseQueue.isNotEmpty) {
-      _gDevice.drawQueue(diffuseQueue, _globalParameters, -1);
-    }
-
-    // decals
-    if(decalQueue.isNotEmpty) {
-      _gDevice.drawQueue(decalQueue, _globalParameters, -1);
-    }
-    if (drawDecalsFn)
-    {
-      drawDecalsFn();
-    }
-
-    // transparent objects
-    if(transparentQueue.isNotEmpty) {
-      _gDevice.drawQueue(transparentQueue, _globalParameters, -1);
-    }
-
-    if (drawTransparentFn)
-    {
-      drawTransparentFn();
-    }
-
-    if (drawDebugFn)
-    {
-      drawDebugFn();
-    }
-    */
-
     /*
     if (usingRenderTarget)
     {
@@ -866,6 +757,13 @@ class RenderManager {
       gd.draw(this.quadPrimitive, 4);
     }*/
 
+
+  }
+
+
+  static _prepareRenderer(Renderer renderer) {
+  	//print('PREPARE RENDERER!');
+    _renderManager._initRenderer(renderer);
   }
   /*
   void _drawAmbientPass(Vector4 ambientColor) {

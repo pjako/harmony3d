@@ -1,8 +1,10 @@
 part of harmony;
 
+/// A Collider defines a physical Collision of an object and is not rigid
 class Collider extends Component {
+	/// The Bounds of the Collider
   Aabb3 bounds;
-  bool enabled;
+  /// Is this a trigger?
   bool isTrigger;
 
   void onCollisionEnter(Collider collision) {}

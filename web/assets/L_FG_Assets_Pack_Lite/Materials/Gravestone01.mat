@@ -1,1 +1,0 @@
-{"name":"Gravestone01", "shader":"assets/shader/specular.shader", "uniforms":{"_Shininess":0.078125, "_Color":[ 0.7843137, 0.7843137, 0.7843137 ], "_SpecColor":[ 0.0, 0.2476255, 0.5447761, 1.0 ]}, "textures":{"_MainTexture":"assets/L_FG_Assets_Pack_Lite/Textures/Gravestone01_D.png"}}

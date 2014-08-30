@@ -29,7 +29,13 @@ export 'package:animator/animation.dart';
 
 part 'src/harmony/game_timer.dart';
 part 'src/harmony/engine_manager.dart';
-part 'src/harmony/resource_manager.dart';
+
+part 'src/harmony/resource/asset.dart';
+part 'src/harmony/resource/asset_handler.dart';
+part 'src/harmony/resource/loader.dart';
+part 'src/harmony/resource/resource_manager.dart';
+part 'src/harmony/resource/resources.dart';
+
 
 part 'src/harmony/application.dart';
 part 'src/harmony/time.dart';
@@ -41,6 +47,7 @@ part 'src/harmony/screen.dart';
 part 'src/harmony/unique_object.dart';
 part 'src/harmony/debug.dart';
 part 'src/harmony/scene.dart';
+part 'src/harmony/scene_handler.dart';
 part 'src/harmony/scene_loader.dart';
 part 'src/harmony/scene_view.dart';
 part 'src/harmony/game_object.dart';
@@ -55,13 +62,13 @@ part 'src/harmony/component/component_manager.dart';
 part 'src/harmony/audio/audio_listener.dart';
 part 'src/harmony/audio/audio_source.dart';
 part 'src/harmony/audio/audio_clip.dart';
+part 'src/harmony/audio/audio_clip_handler.dart';
+part 'src/harmony/audio/audio.dart';
 
 part 'src/harmony/components/behaviour.dart';
 part 'src/harmony/components/collider.dart';
 part 'src/harmony/components/rigid_body.dart';
 
-
-part 'src/harmony/helper/bounds.dart';
 part 'src/harmony/helper/frustum_planes.dart';
 part 'src/harmony/helper/math_helper.dart';
 part 'src/harmony/helper/static_batcher.dart';
@@ -74,13 +81,11 @@ part 'src/harmony/rendering/light.dart';
 part 'src/harmony/rendering/camera.dart';
 part 'src/harmony/rendering/renderer.dart';
 part 'src/harmony/rendering/mesh.dart';
+part 'src/harmony/rendering/mesh_handler.dart';
+part 'src/harmony/rendering/mesh_renderer.dart';
 part 'src/harmony/rendering/material.dart';
 part 'src/harmony/rendering/shader.dart';
 part 'src/harmony/rendering/texture.dart';
 part 'src/harmony/rendering/render_manager.dart';
 part 'src/harmony/rendering/forward_renderer.dart';
 part 'src/harmony/rendering/skinned_mesh_renderer.dart';
-
-part 'src/harmony/devices/input_device.dart';
-part 'src/harmony/devices/screen_device.dart';
-part 'src/harmony/devices/time_device.dart';

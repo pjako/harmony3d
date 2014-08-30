@@ -1,1 +1,0 @@
-{"name":"Plant02", "shader":"assets/shader/transparent/cutout/diffuse.shader", "uniforms":{"_Color":[ 0.7843137, 0.7843137, 0.7843137 ], "_Cutoff":0.5}, "textures":{"_MainTexture":"assets/L_FG_Assets_Pack_Lite/Textures/Plant01_D.png"}}

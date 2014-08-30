@@ -59,7 +59,7 @@ class TerrainDataHandler extends AssetHandler {
   bool unload(Asset asset) {
     return true;
   }
-  Future save(Asset asset, String src, saveDevice) {
+  Future store(Asset asset, String src, saveDevice) {
   }
 }
 

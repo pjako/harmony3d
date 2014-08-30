@@ -44,48 +44,7 @@ class RenderJob {
   }
   static final _l = [];
 }
-class MeshRenderer extends Renderer {
-  final List<RenderJob> _jobs = [];
-  @Serialize(SerializeType.int, customName: 'lightmapIndexies')
-  int _lightmapIndex;
-  @Serialize(SerializeType.vec4, customName: 'lightmapTilingOffsets')
- 	Vector4 _lightmapTiling;
-  Texture _lightMap;
-  void _preInit() {
-    gameObject._renderer = this;
-  }
 
-  void _init() {
-  	if(_material != null && _mesh != null) {
-  		_testLoad(null);
-  	}
-  }
-
-  void _testLoad(_) {
-    if(_isReadyToRender == true) return;
-    if(_lightMap != null) {
-      _isReadyToRender = _material.isLoaded && _mesh.isLoaded && _lightMap.isLoaded;
-    } else {
-      _isReadyToRender = _material.isLoaded && _mesh.isLoaded;
-    }
-    if(_isReadyToRender) {
-      RenderManager._prepareRenderer(this);
-      _bounds.copyFrom(_mesh._internalBounds);
-
-
-    }
-  }
-
-  void _addLightmap(Texture lightMap) {
-    //_parameters.lightmap = lightMap._parameters;
-    _lightMap = lightMap;
-    if(_lightMap.isLoaded) {
-      _testLoad(null);
-      return;
-    }
-    _lightMap.notifyOnLoad().then(_testLoad);
-  }
-}
 
 abstract class CustomRenderer extends Renderer {
 
@@ -124,7 +83,8 @@ class RendererConstants {
 	Aabb3 worldBounds;
 	RendererConstants();
 }
-
+/// The renderer component is the base class to 3D rendering objects
+/// Use Meshrenderer or Skinnedrenderer to render.
 class Renderer extends Component {
   final Matrix4 _worldViewProjection = new Matrix4.zero();
   final List<RenderJob> _renderJobs = [];
@@ -141,9 +101,13 @@ class Renderer extends Component {
   final Aabb3 _bounds = new Aabb3();
   bool _isReadyToRender = false;
 
+  /// Shared Material with other Renderer
+  /// Changes in the material will affect all renderers that use this material.
   Material get sharedMaterial => _material;
   //Material _sharedMaterial;
 
+  /// Material, calling this will create an seperate material
+  /// But currently does the same thing as Shared Material
   Material get material => _material;
   void set material(Material newMat) {
     _isReadyToRender = false;
@@ -156,7 +120,7 @@ class Renderer extends Component {
     }
     _material.notifyOnLoad().then(_testLoad);
   }
-
+  /// tests if all renderdata are ready to render
   void _testLoad(_) {
     if(_isReadyToRender == true) return;
     if(_material == null || _mesh == null) return;
@@ -166,6 +130,7 @@ class Renderer extends Component {
     }
   }
 
+  /// Mesh that this Renderer uses
   Mesh get mesh => _mesh;
   void set mesh(Mesh newMesh) {
     _isReadyToRender = false;
@@ -186,18 +151,11 @@ class Renderer extends Component {
 
   Aabb3 get _internalBounds => _bounds;
 
-
-  void setConstant(String name, dynamic value) {
-    //_parameters.rendererConstants[name] = value;
-  }
-  dynamic getConstant(String name) {
-    //return _parameters.rendererConstants[name];
-  }
-
   void _preInit() {
     gameObject._renderer = this;
   }
 
+  /// Prepare renderer for rendering
   void _renderUpdate(Camera camera) {
     // we use this to update the worldMatrix and get the world matrix without making a copy
     transform._updateWorldMatrix();

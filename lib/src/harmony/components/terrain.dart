@@ -1,12 +1,12 @@
-part of game_core;
+part of harmony;
 
 
 class TerrainData extends Asset {
   int size;
   int height;
-  Texture depth;
-  Texture control;
-  Texture splat0, splat1, splat2, splat3, splat4;
+  @Serialize(SerializeType.asset) Texture depth;
+  @Serialize(SerializeType.asset) Texture control;
+  @Serialize(SerializeType.asset) Texture splat0, splat1, splat2, splat3, splat4;
 
 
   void _fromJson(Map obj) {

@@ -1,11 +1,13 @@
 part of harmony;
 
+
+/// How to serialize the Value, which Type and optinal an custom name
 class Serialize {
   final SerializeType type;
   final String customName;
   const Serialize(SerializeType this.type, {String this.customName});
 }
-
+/// Used to define dependency of an Component as Metadata
 class DependsOn {
   final Type type;
   const DependsOn(this.type);
@@ -37,7 +39,8 @@ class SerializeType {
   static const halfVec2 = const SerializeType(20);
   static const halfVec3 = const SerializeType(21);
   static const halfVec4 = const SerializeType(22);
-  static const asset = const SerializeType(22);
+  static const asset = const SerializeType(23);
+  static const component = const SerializeType(24);
 }
 
 
@@ -78,19 +81,28 @@ class SerializeType {
   return new Float32List.view(base64decoder.decode(base64String));
 }
 
-
+/// Componentsystem Manages certain component type
+/// It resets and stores them when they are destroyed
+/// also does serializing/deserialzing with information from Metadata
 class ComponentSystem {
+	/// Name of the Component (The classname)
   String get componentName => _info.name;
   mist.ClassInfo _info;
+  /// Component to store unused Components
   final ComponentPool _pool;
+  /// Default Values for each field of the Component
   final Map<mist.FieldInfo,dynamic> _defaultValues = {};
-
+  /// Serialize Info for each field, digested from Metadata
   final Map<mist.FieldInfo,Serialize> _serialize = {};
+  /// Dependencies for other Component Types
   final List<Type> _dependencies = [];
+  /// Currently active Components in this Scene
   final List<Component> _liveComponents = [];
+  /// Type of this Component
   Type get componentType => _info.type;
 
 
+  /// Does this Componenttype inplement the init call?
   bool _hasInit = false;
   bool get hasInit => _hasInit;
 
@@ -112,6 +124,7 @@ class ComponentSystem {
 
 
 
+  /// Get Method of ComponentType by name
   mist.MethodInfo getMethod(String name) {
     for(final method in _info.methods) {
       if(method.methodName == name) return method;
@@ -119,6 +132,7 @@ class ComponentSystem {
     return null;
   }
 
+  /// Digest dependency Metadata of a component
   void _setDepenendices() {
     _dependencies.clear();
     final count = _info.metadataCount;
@@ -131,6 +145,7 @@ class ComponentSystem {
     }
   }
 
+  /// Digst all fields with serialize metadata
   void _readFields() {
     _serialize.clear();
     final fields = _info.fields;
@@ -144,6 +159,7 @@ class ComponentSystem {
       }
     }
   }
+  /// Stores default Values for Components Fields
   void _createDefaultValues() {
     _defaultValues.clear();
     _hasInit = false;
@@ -160,20 +176,25 @@ class ComponentSystem {
     _pool.add(comp);
   }
 
+  /// Add Component [comp] to livecomponents
   void _addLiveComponent(Component comp) {
     if(_liveComponents.contains(comp)) return;
     _liveComponents.add(comp);
   }
+  /// Remove given Component from livecomponents
   void _removeLiveComponent(Component comp) {
     _liveComponents.remove(comp);
   }
 
+  /// Destroys Component (dont call this directly!)
   void destroyComponent(Component component) {
     _removeLiveComponent(component);
     reset(component);
     _pool.add(component);
   }
 
+  /// Resets the Component to the default values and removes all non default
+  /// Depenendcies on assets
   Component reset(Component component) {
     //print('reset Component');
     final fields = _info.fields;
@@ -273,6 +294,7 @@ class ComponentSystem {
     return component;
   }
 
+  /// Encodes given List of Components
   Map encode(List<Component> components) {
     final length = components.length;
     final map = {};
@@ -351,6 +373,8 @@ class ComponentSystem {
     return map;
   }
 
+  /// Sets the data of [components] with [componentsData] with a map
+  /// with [objects] that some fields might need.
   void decode(List<Component> components, Map<String,dynamic> componentsData, Map<int, dynamic> objects) {
     final length = components.length;
     for(var name in componentsData.keys) {
@@ -438,90 +462,6 @@ class ComponentSystem {
       for(int i=0; i < length; i++) {
         field.setField(components[i], list[i]);
       }
-
-/*
-      if(rawData is String) {
-        switch(type) {
-
-          case(SerializeType.float32):
-            list = decodeFloat32(rawData);
-          break;
-          case(SerializeType.uInt8):
-            list = decodeUint8(rawData);
-          break;
-          case(SerializeType.uInt16):
-            list = decodeUint16(rawData);
-          break;
-          case(SerializeType.uInt32):
-            list = decodeUint32(rawData);
-          break;
-          case(SerializeType.int16):
-            list = decodeInt16(rawData);
-          break;
-          case(SerializeType.int32):
-            list = decodeInt32(rawData);
-          break;
-          case(SerializeType.int):
-            list = decodeInt64(rawData);
-          break;
-          case(SerializeType.object):
-            list = decodeUint32(rawData);
-          for(int i=0; i < length; i++) {
-            int objId = list[i];
-            if(objId == 0) {
-              field.setField(components[i], null);
-            } else {
-              field.setField(components[i], objects[objId]);
-            }
-            return;
-          }
-          break;
-
-        }
-      } else if(rawData is List<num>) {
-        //var type = data;
-        switch(type) {
-          case(SerializeType.object):
-            list = rawData;
-            for(int i=0; i < length; i++) {
-              int objId = list[i];
-              if(objId == 0) {
-                field.setField(components[i], null);
-              } else {
-                field.setField(components[i], objects[objId]);
-              }
-            }
-            return;
-          case(SerializeType.double):
-            list = rawData;
-            for(int i=0; i < length; i++) {
-              double value = list[i];
-              field.setField(components[i], value);
-            }
-            return;
-          case(SerializeType.int):
-            list = rawData;
-            for(int i=0; i < length; i++) {
-              int value = list[i];
-              field.setField(components[i], value);
-            }
-            return;
-        }
-        if(type == SerializeType.object) {
-
-        } else {
-          list = rawData;
-        }
-
-        list = rawData;
-      } else if(rawData is List<String>) {
-        list = rawData;
-      }
-      if(list == null) {
-      	print('could not parse rawData! $rawData');
-      }*/
-
-
     });
   }
 }

@@ -1,1 +1,0 @@
-library harmony3d;

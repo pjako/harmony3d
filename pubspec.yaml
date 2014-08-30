@@ -1,0 +1,20 @@
+name: harmony3d
+description: A 3D Game Engine written in dart
+dependencies:
+  aabb_tree:
+    path: /Users/jako/projects_dart/aabb_tree
+  animator:
+    path: /Users/jako/projects_dart/animator
+  dml:
+    path: /Users/jako/projects/dart_ml
+  harmony3d_terrain:
+    path: /Users/jako/projects_dart/harmony3d_terrain
+  harmony_devices:
+    path: /Users/jako/projects_dart/harmony_devices
+  mist:
+    path: ../../dart/mist
+  vector_math:
+    git: https://github.com/johnmccutchan/vector_math.git
+  yaml: any
+transformers:
+- mist

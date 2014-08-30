@@ -3,7 +3,7 @@ part of harmony;
 class RenderBatch {
 
 }
-
+/// Static Batcher, not functional yet
 class StaticBatcher {
 
   void createBatches(Scene scene, double batchAabb3Size) {
@@ -42,6 +42,7 @@ class StaticBatcher {
 
 
   void batch(List<MeshRenderer> renderers) {
+  	/*
     int instaceCount = renderers.length;
     var firstInstance = renderers.first;
     Material material = firstInstance._material;
@@ -108,7 +109,7 @@ class StaticBatcher {
         }
       }
       indexOffset += indexOffsetPerInstace;
-    }
+    }*/
   }
 
 

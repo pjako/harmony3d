@@ -14,6 +14,7 @@ class Time {
   static double get realTimeSinceStartup => _engineManager._time;
   //static createTimer(double time, bool periodic, TimerCallback callback);
 
+  /// Creates a GameTimer, synonym for new GameTimer(/*...*/);
   static GameTimer createTimer(double time, TimerCallback callback, {bool periodic: false}) {
     return new GameTimer(time,callback,periodic);
   }

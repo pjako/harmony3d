@@ -4,7 +4,7 @@ part of harmony;
 
 
 
-
+/// Loads a Scene by a map. All dependecies gets loaded as well.
 Future _loadScene(Scene scene, Map map) {
 	print('loadScene...');
   final Map<int,dynamic> uniqueObjects = {};
@@ -270,9 +270,9 @@ class SceneSerializer {
 
     components.forEach((Type type, List<Component> cList) {
       var comp = cList.first;
-      if(comp is Behaviour) {
+      /*if(comp is Behaviour) {
         return;
-      }
+      }*/
       if(comp is Transform) {
         var map = {
           'enabled' : <bool>[],
@@ -288,15 +288,6 @@ class SceneSerializer {
         return;
       }
     });
-
-
-
-
-
-
-
-
-
   }
 
   static Map _gameObjectMap(Scene scene, List<GameObject> gameObjects) {

@@ -1,15 +1,32 @@
 part of harmony;
 
 
-
+/// The GameObject is the Container Object for Components.
+/// By default it contains a Transform
 class GameObject extends UniqueObject with AabbTreeNode {
-  String _tag;
+  /// Name of this GameObject
+  String name;
+
+  String _tag = '';
+  /// Set or get the Tag of this Game Object
+  /// This enables this Object to be searchable by tag in the scene
   String get tag => _tag;
+  void set tag(String newTag) {
+    if(newTag == null) {
+    	_tag = '';
+    	return;
+    }
+    _tag = newTag;
+  }
 
   /// Defines which mode we in, physics 2D or 3D
+  // TODO: Is this the right place for this?!
   bool _physics3dMode = false;
 
+  /// Is this GameObject enabled?
   bool enabled = true;
+
+  /// is this GameObject static? (it does not move)
   bool static = false;
 
   int _layer;
@@ -17,20 +34,23 @@ class GameObject extends UniqueObject with AabbTreeNode {
   static final Aabb3 _worldBounds = new Aabb3();
   // _scene._dynamicSpatialMap.update(this, bounds);
 
+
+  /// Specifies in which layer this GameObject is.
   void set layer(int l) {
     _layer = l;
   }
   int get layer => _layer;
 
-  void set tag(String newTag) {
-    //_scene.
-  }
+
 
   Scene _scene;
+  /// The Scene this GameObject is part of
   Scene get scene => _scene;
   GameObject _parent;
+  /// The parent of this GameObject (is null for the root GameObject)
   GameObject get parent => _parent;
   Set<GameObject> _children;
+  /// The Children of this GameObject
   Set<GameObject> get children => _children;
   List<Component> _components;
   //List<Component> get components => _components;
@@ -39,26 +59,33 @@ class GameObject extends UniqueObject with AabbTreeNode {
   Set<GameObject> _childrenToRegister;
 
 
-  String name;
+
+  /// The transform object
   Transform get transform => _transform;
   Transform _transform;
+  /// Camera component
   Camera get camera => _camera;
   Camera _camera;
   Collider2D _collider2d;
   Collider2D get collider2d => _collider2d;
   Collider _collider;
   Collider get collider => _collider;
+  /// Renderer component
   Renderer get renderer => _renderer;
   Renderer _renderer;
+  /// AudioSource component
   AudioSource get audio => _audio;
   AudioSource _audio;
+  /// Light component
   Light get light => _light;
   Light _light;
+
   RigidBody _rigidBody;
   RigidBody get rigidBody => _rigidBody;
   Rigidbody2D _rigidbody2d;
   Rigidbody2D get rigidbody2d => _rigidbody2d;
 
+  /// Create a GameObject optinal with a [name]
   GameObject([this.name]) {
     _parent = null;
     _children = new Set<GameObject>();
@@ -68,6 +95,8 @@ class GameObject extends UniqueObject with AabbTreeNode {
     addComponent(Transform);
     //_events = new EventListenerMap(this);
   }
+
+  /// Create a GameObject without an transform attached
   GameObject._transformless(this.name) {
     _parent = null;
     _children = new Set<GameObject>();
@@ -114,14 +143,10 @@ class GameObject extends UniqueObject with AabbTreeNode {
   }
 
 
-  //final Aabb3 _bounds = new Aabb3();
-
-  ///
   /// Bounds are per GameObject. If there is
   /// more then one Component that has bounds
   /// it creates bounds the hull all bounds in
   /// all Component.
-  ///
   void _updateBounds() {
     /* Which bound to use, the hirachy is, depending if it exist:
      * 1. Renderer
@@ -152,10 +177,8 @@ class GameObject extends UniqueObject with AabbTreeNode {
     transform.transformBounds(_bounds, _bounds);
   }
 
-  /**
-   * Returns the first component of the specified type.
-   * Interfaces and base clases may be used, unless exactType is true.
-   */
+  /// Returns the first component of the specified type.
+  /// Interfaces and base clases may be used, unless exactType is true.
   Component getComponent(Type type) {
     for(var component in _components) {
       // TODO: Replace by an actual type check.
@@ -176,10 +199,8 @@ class GameObject extends UniqueObject with AabbTreeNode {
       return null;
     }
 
-  /**
-   * Returns all the components of the specified type.
-   * Interfaces and base clases may be used, unless exactType is true.
-   */
+   /// Returns all the components of the specified type.
+   /// Interfaces and base clases may be used, unless exactType is true.
    List<Component> getComponentsByString(String type) {
     var list = [];
     for(var component in _components) {
@@ -202,15 +223,13 @@ class GameObject extends UniqueObject with AabbTreeNode {
     return list;
   }
 
-   /**
-    * Returns a list of all the components attached to this game object.
-    */
+
+  /// Returns a list of all the components attached to this game object.
   List<Component> getAllComponents() {
     return new List.from(_components);
   }
-  /**
-   * Adds a component of the given type to this game object.
-   */
+
+  /// Adds a component of the given type to this game object.
   Component addComponent(Type type) {
     var component = _componentManager.createComponent(type);
     component._owner = this;
@@ -228,13 +247,11 @@ class GameObject extends UniqueObject with AabbTreeNode {
       return component;
     }
   }
-  /**
-   *
-   * Adds a component of the given type to this game object.
-   * Non default Components use the Fully qualified name.
-   * f.E. 'harmoy.Transform' ('<libname>.<componentname>')
-   * ((Private for now! Fill an issue if you need this!
-   */
+
+  /// Adds a component of the given type to this game object.
+  /// Non default Components use the Fully qualified name.
+  /// f.E. 'harmoy.Transform' ('<libname>.<componentname>')
+  /// ((Private for now! Fill an issue if you need this!))
   Component _addComponentByString(String type) {
     var component = _componentManager._createComponentByString(type);
     component._owner = this;
@@ -252,12 +269,11 @@ class GameObject extends UniqueObject with AabbTreeNode {
       return component;
     }
   }
-  /**
-   * Destroys a component attached to this game object.
-   * This component cannot be used on other game objects.
-   * References to the destroyed component are now invalid and they will not
-   * be set to null because the Component is part of an object pool.
-   * */
+
+  /// Destroys a component attached to this game object.
+  /// This component cannot be used on other game objects.
+  /// References to the destroyed component are now invalid and they will not
+  /// be set to null because the Component is part of an object pool.
   void destroyComponent(Component component) {
     if(!_components.contains(component)) {
       throw 'Trying to remove a component (${component.runtimeType}) from a '
@@ -282,11 +298,9 @@ class GameObject extends UniqueObject with AabbTreeNode {
 
   }
 
-  /**
-   * Adds a new child to this game object.
-   * Reparenting and scene registration are managed automatically.
-   * Returns the game object that was added (for chaining purpuses).
-   */
+  /// Adds a new child to this game object.
+  /// Reparenting and scene registration are managed automatically.
+  /// Returns the game object that was added (for chaining purpuses).
   GameObject addChild(GameObject go) {
     if (go.scene != null) {
       // Make sure we are not adding game object from a different scene.
@@ -316,22 +330,17 @@ class GameObject extends UniqueObject with AabbTreeNode {
     return go;
   }
 
-  /**
-   * Checks that all the components' dependencies on other components
-   * are satisfied.
-   */
+  /// Checks that all the components' dependencies on other components
+  /// are satisfied.
   bool _checkDependencies() {
     for(var component in _components) {
       if(!component._checkDependencies()) return false;
     }
     return true;
   }
-
-  /**
-   * If there are components added but not yet initialized, this will initialize
-   * them. Called by the scene when a game object is registered with it.
-   * Do not manually call this.
-   */
+  /// If there are components added but not yet initialized, this will initialize
+  /// them. Called by the scene when a game object is registered with it.
+  /// Do not manually call this.
   void _initializeComponents() {
     if(_componentsToInitialize != null){
       for(var component in _componentsToInitialize) {
@@ -357,6 +366,7 @@ class GameObject extends UniqueObject with AabbTreeNode {
     _componentsToInitialize.clear();
   }
 
+  /// Destroys this Gameobjects, all its components and ints childs
   void destroy() {
     if(_scene != null) {
       _scene.destroyGameObject(this);
@@ -373,16 +383,10 @@ class GameObject extends UniqueObject with AabbTreeNode {
 
   }
 
+  /// Draw the GameObjects bounds for debuging
   void drawBounds() {
     var bounds = _internalWorldBounds;
     Debug.drawAABB(bounds.min, bounds.max, Debug._debugColor, depthEnabled: false);
-  }
-
-  /**
-   * Serialize.
-   */
-  String toJson() {
-    //return SceneDescriptor.serializeGameObject(this);
   }
 
 }

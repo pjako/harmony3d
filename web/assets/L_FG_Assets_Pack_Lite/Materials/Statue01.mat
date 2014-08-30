@@ -1,1 +1,0 @@
-{"name":"Statue01", "shader":"assets/shader/specular.shader", "uniforms":{"_Shininess":0.078125, "_Color":[ 0.7450981, 0.7450981, 0.7450981 ], "_SpecColor":[ 0.0, 0.135633, 0.8432836, 1.0 ]}, "textures":{"_MainTexture":"assets/L_FG_Assets_Pack_Lite/Textures/Statue01_D.png"}}

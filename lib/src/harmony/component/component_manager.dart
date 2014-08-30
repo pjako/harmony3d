@@ -1,12 +1,15 @@
 part of harmony;
 
 
-/**
- * Manages all Components (instead of the scene directly)
- */
-class ComponentManager {
-  //static final ComponentManager _current = new ComponentManager();
 
+/// Manages all Components
+/// Creates for each Componenttype an ComponentSystem which stores
+/// unused components and also serialize, deserializes and also resets them when
+/// they are destroyed.
+/// Also manages updates of the components (calls update, fixedUpdate, ect.)
+class ComponentManager {
+
+	/// Store reflections of ll subclasses of Component
   final List<mist.ClassInfo> _classInfos = mist.getAllSubclassesInfoOf(Component);
   final Map<Type, ComponentSystem> _systems = {};
   final List<ComponentSystem> _updateComponentSystems = new List<ComponentSystem>();
@@ -14,34 +17,26 @@ class ComponentManager {
   final List<ComponentSystem> _fixedUpdateComponentSystems = new List<ComponentSystem>();
 
   ComponentManager() {
-    //_systems[Transform] = new TransformSystem._internal();
   }
 
-  void _setDefaultComponents() {
 
-  }
-
-  /**
-   * Creates a component of the specified type and attaaches it to the given
-   * game object
-   */
+  /// Creates a component of the specified type and attaaches it to the given
+  /// game object
   Component createComponent(Type type) {
     var sys = getSystemForType(type);
     var comp = sys.createComponent();
     comp._system = sys;
     return comp;
-  }//_createComponentByString
+  }
 
 
-  /**
-   * Creates a component of the specified [type] and attaaches it to the given
-   * game object
-   */
+  /// Creates a component of the specified [type] and attaaches it to the given
+  /// game object
   Component _createComponentByString(String type) {
   	if(!type.contains('.')) {
   		type = 'harmony.$type';
   	}
-    var sys;// = getSystemForType(type);
+    var sys;
     for(var system in _systems.values) {
     	if(system.componentName == type) {
     		sys = system;
@@ -64,12 +59,10 @@ class ComponentManager {
     var comp = sys.createComponent();
     comp._system = sys;
     return comp;
-  }//_createComponentByString
+  }
 
-  /**
-   * Returns the component system for the specified type.
-   * Throws an ArgumentError if the type is not registered.
-   */
+  /// Returns the component system for the specified type.
+  /// Throws an ArgumentError if the type is not registered.
   ComponentSystem getSystemForType(Type type) {
     var s = _systems[type];
     if(s == null) {
@@ -98,13 +91,13 @@ class ComponentManager {
     }
   }
 
-  /**
-   * Register a component [system] with [typeName].
-   */
+  /// Register a component [system] with [typeName].
   void registerComponentSystem(Type type, ComponentSystem system) {
     _systems[type] = system;
   }
 
+
+  /// Destroys a component
   void destroyComponent(Component comp) {
     final sysLive = comp._system._liveComponents;
     if(_loopingType == null) return;
@@ -116,15 +109,20 @@ class ComponentManager {
       _loopIndex--;
     }
   }
+
+
+
   Type _loopingType;
+  // if objects get destroyed while updating components and it is of the type that
+  // gets currently update, the loop index gets corrected
   int _loopIndex;
   bool _needsIndexChange = false;
-
-
-  void _loopOverLiveComps(List<dynamic> l, Type type, call) {
+  // Runs given function [call] for a given list of objects [l]
+  void _loopOverLiveComps(List<Component> l, Type type, call) {
     _loopingType = type;
     for(int i=0; i < l.length; i++) {
       final dynamic comp = l[i];
+      if(!comp.enabled) continue;
       _loopIndex = i;
       call(comp);
       if(_needsIndexChange) {
@@ -136,18 +134,21 @@ class ComponentManager {
     _loopingType = null;
   }
 
+  /// Calls update() on each component that implements it
   void updateComponents() {
     final call = (c) {c.update();};
     for (dynamic system in _updateComponentSystems) {
       _loopOverLiveComps(system._liveComponents,system.componentType,call);
     }
   }
+  /// Calls lateUpdate on each Component that implements it
   void lateUpdateComponents() {
     final call = (c) {c.lateUpdate();};
     for (dynamic system in _lateUpdateComponentSystems) {
       _loopOverLiveComps(system._liveComponents,system.componentType,call);
     }
   }
+  /// Calls fixedUpdate on each Component that implements it
   void fixedUpdateComponents() {
     final call = (c) {c.fixedUpdate();};
     for (dynamic system in _fixedUpdateComponentSystems) {

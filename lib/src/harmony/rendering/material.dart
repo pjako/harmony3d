@@ -16,13 +16,18 @@ class _SubMaterial {
     _textures.clear();
   }
 }
-
+/// Material defines the how the surface of an object gets shaded
+/// Its basically an Shaderinstance with specific textures and uniforms.
+/// Used by Mesh/Skinnedrenderer
 class Material extends Asset {
+	/// Store Uniform of
   final Map<String, dynamic> _uniforms = {};
   final Map<String, Texture> _textures = {};
   int renderQueue = 0;
   int passCount = 0;
   Shader _shader;
+
+  /// Shader this Material uses
   Shader get shader => _shader;
   void set shader(Shader val) {
     _shader = val;
@@ -31,10 +36,12 @@ class Material extends Asset {
   }
 
 
+  /// Sets a [value] for given constant [name]
   void setConstant(String name, dynamic value) {
     _uniforms[name] = value;
   }
 
+  /// Sets a [texture] for specified [name]
   void setTexture(String name, Texture texture) {
     var oldTex = _textures[name];
     if(oldTex != null) oldTex.removeDepenency(this);
@@ -44,7 +51,7 @@ class Material extends Asset {
   }
 }
 
-
+/// Mangages Loading/Unloading of Materials
 @HandlesAsset('mat')
 class MaterialHandler extends AssetHandler {
   List<Material> _cache = [];
@@ -112,10 +119,10 @@ class MaterialHandler extends AssetHandler {
     var mat = asset as Material;
     mat._shader.removeDepenency(this);
     mat._shader = null;
-    mat._parameters.customData = null;
-    mat._parameters.shaderParameters = null;
-    mat._parameters.textures.clear();
-    mat._parameters.uniforms.clear();
+    //mat._parameters.customData = null;
+    //mat._parameters.shaderParameters = null;
+    mat._textures.clear();
+    mat._uniforms.clear();
     for(var tex in mat._textures) {
       tex.removeDepenency(this);
     }

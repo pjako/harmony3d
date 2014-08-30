@@ -1,17 +1,16 @@
 part of harmony;
 
-/**
- *
- * SceneView
- * Contains all logic for calculating visible components and gameobjects towards a camera.
- *
- * */
+/// SceneView
+/// Contains all logic for calculating visible components and gameobjects towards a camera.
 class SceneView {
   final Set<GameObject> _needsSpartialMapBoundsUpdateList = new Set<GameObject>();
+  /// contains all static object in the Scene
   final AabbTree<GameObject> _staticSpatialMap = new AabbTree<GameObject>();
+  /// Contains all dynamic of the Scene
   final AabbTree<GameObject> _dynamicSpatialMap = new AabbTree<GameObject>();
   final _FrustumPlanes _frustumPlanes = new _FrustumPlanes();
   final List<Renderer> _visibleRenderers = new List<Renderer>();
+  /// Contains all visible light to the current sceneview
   final List<Light> _visibleLights = new List<Light>();
   final List<Light> _globalDirectionalLights = new List<Light>();
   final List<GameObject> _visibleGameObjects = new List<GameObject>();

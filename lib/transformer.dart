@@ -79,6 +79,7 @@ class HarmonyTransformer extends Transformer {
     {
     	_mist.applyResolver(transform, resolver);
     }
+    return true;
 
 
     if(_transformedList.contains(lib.source.fullName)) {

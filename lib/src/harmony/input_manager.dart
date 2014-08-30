@@ -1,33 +1,11 @@
 part of harmony;
 
-class GamePad {
-  List<num> buttons = new List.filled(16, 0.0);
-  List<num> axes = new List.filled(16, 0.0);
-  bool get xButtonA => false;
-  bool get xButtonB => false;
-  bool get xButtonX => false;
-  bool get xButtonY => false;
-  bool get xButtonRB => false;
-  bool get xButtonLB => false;
-  bool get xStart => false;
-  bool get xBack => false;
-  double get xButtonLT => 0.0;
-  double get xButtonLR => 0.0;
-  double get xAnalogLeftAxisX => 0.0;
-  double get xAnalogLeftAxisY => 0.0;
-  double get xAnalogRightAxisX => 0.0;
-  double get xAnalogRightAxisY => 0.0;
-  bool get xDigitalAxisX => false;
-  bool get xDigitalAxisY => false;
-}
 
 
 
-///
-/// Digests all Input Events from DML_Window
-///
-class InputManager {
-  InputManager._internal(DMLWindow dmlWindow) {
+/// Digests all Input Events
+class _InputManager {
+  _InputManager._internal(DMLWindow dmlWindow) {
     dmlWindow.onGamepadAxis = _onGamepadAxis;
     dmlWindow.onGamepadButton = _onGamepadButton;
     dmlWindow.onGamepadConnect = _onGamepadConnect;
@@ -109,10 +87,10 @@ class InputManager {
 
 
   void _onGamepadAxis(DMLGamepadAxisEvent event) {
-    _gamepads[event.gamepadIndex].axes[event.axis] = event.value;
+    _gamepads[event.gamepadIndex]._axes[event.axis] = event.value;
   }
   void _onGamepadButton(DMLGamepadButtonEvent event) {
-    _gamepads[event.gamepadIndex].buttons[event.button] = event.value;
+    _gamepads[event.gamepadIndex]._buttons[event.button] = event.value;
 
   }
   void _onGamepadConnect(DMLGamepadConnectEvent event ) {
